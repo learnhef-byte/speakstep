@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SpeakStep | Learn English</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f4f7ff;color:#172554}
+header{background:#173c91;color:white;padding:22px 7%;display:flex;justify-content:space-between;align-items:center}
+header h2{margin:0}
+.points{background:#fff;color:#173c91;padding:10px 15px;border-radius:22px;font-weight:bold}
+main{max-width:850px;margin:30px auto;padding:16px}
+.hero{background:#173c91;color:white;padding:30px;border-radius:20px}
+.hero h1{font-size:32px;margin-top:0}
+section{background:white;margin-top:20px;padding:24px;border-radius:16px;box-shadow:0 3px 14px #dce3f3}
+button{background:#2856c5;color:white;border:0;border-radius:9px;padding:12px 16px;margin:5px;cursor:pointer;font-size:15px}
+button:hover{background:#173c91}
+.option{display:block;width:100%;text-align:left;background:#eef2ff;color:#172554}
+#feedback{font-weight:bold;margin-top:12px}
+input{padding:12px;width:100%;border:1px solid #bbb;border-radius:8px;font-size:16px}
+.small{color:#64748b;font-size:14px}
+</style>
+</head>
+<body>
+<header>
+<h2>🗣️ SpeakStep</h2>
+<div class="points">⭐ Points: <span id="points">0</span></div>
+</header>
+<main>
+<div class="hero">
+<p>YOUR FREE ENGLISH JOURNEY</p>
+<h1>Learn English, one step at a time.</h1>
+<p>Practice vocabulary, test yourself and build speaking confidence every day.</p>
+<button onclick="document.getElementById('quiz').scrollIntoView()">Start Learning →</button>
+</div>
+
+<section id="quiz">
+<h2>🧠 Daily English Quiz</h2>
+<p id="question">Choose the correct meaning of “Brave”.</p>
+<div id="options"></div>
+<p id="feedback" aria-live="polite"></p>
+<p class="small">Answer correctly to earn 10 points.</p>
+<button onclick="nextQuestion()">Next Question →</button>
+</section>
+
+<section>
+<h2>🗣️ Speaking Practice</h2>
+<p id="speakingPrompt">Today's sentence: “I want to improve my English.”</p>
+<button onclick="speak()">🔊 Listen</button>
+<button onclick="newPrompt()">New Sentence</button>
+<p class="small">Listen, then speak the sentence aloud yourself.</p>
+</section>
+
+<section>
+<h2>📚 Learn a New Word</h2>
+<h3 id="word">Confident</h3>
+<p id="meaning">Feeling sure about yourself.</p>
+<button onclick="newWord()">Learn Another Word</button>
+</section>
+
+<section>
+<h2>🎯 Your Daily Goal</h2>
+<p>Complete 5 quiz questions today.</p>
+<p id="progress">Progress: 0 / 5</p>
+</section>
+</main>
+
+<script>
+let points=0,asked=0,answered=false;
+const questions=[
+{q:"Choose the meaning of “Brave”.",o:["Afraid","Courageous","Lazy"],a:1},
+{q:"Choose the correct sentence.",o:["She go to school.","She goes to school.","She going school."],a:1},
+{q:"What is the opposite of “Difficult”?",o:["Easy","Hard","Tough"],a:0},
+{q:"What does “Improve” mean?",o:["To get better","To forget","To sleep"],a:0},
+{q:"Complete: I ___ a student.",o:["is","are","am"],a:2},
+{q:"What is the past tense of “Go”?",o:["Goed","Went","Gone yesterday"],a:1},
+{q:"What does “Honest” mean?",o:["Truthful","Angry","Quick"],a:0}
+];
+let qi=0;
+function showQuestion(){
+answered=false;
+document.getElementById("feedback").textContent="";
+document.getElementById("question").textContent=questions[qi].q;
+const box=document.getElementById("options");
+box.innerHTML="";
+questions[qi].o.forEach((v,i)=>{
+let b=document.createElement("button");
+b.className="option";b.textContent=v;
+b.onclick=()=>check(i);
+box.appendChild(b);
+});
+}
+function check(i){
+if(answered)return;
+answered=true;asked++;
+if(i===questions[qi].a){
+points+=10;
+document.getElementById("feedback").textContent="Correct! 🎉 +10 points";
+}else{
+document.getElementById("feedback").textContent="Not quite. Correct answer: "+questions[qi].o[questions[qi].a];
+}
+document.getElementById("points").textContent=points;
+document.getElementById("progress").textContent="Progress: "+Math.min(asked,5)+" / 5";
+}
+function nextQuestion(){
+qi=(qi+1)%questions.length;
+showQuestion();
+}
+const prompts=[
+"I want to improve my English.",
+"My name is ___.",
+"Today is a beautiful day.",
+"I practise English every day.",
+"I am learning something new."
+];
+let pi=0;
+function newPrompt(){
+pi=(pi+1)%prompts.length;
+document.getElementById("speakingPrompt").textContent="Today's sentence: "+prompts[pi];
+}
+function speak(){
+if(!("speechSynthesis" in window)){
+alert("Audio is not supported in this browser.");return;
+}
+let text=document.getElementById("speakingPrompt").textContent.replace("Today's sentence: ","");
+let utterance=new SpeechSynthesisUtterance(text);
+utterance.lang="en-US";
+speechSynthesis.speak(utterance);
+}
+const words=[
+["Confident","Feeling sure about yourself."],
+["Curious","Wanting to learn or know something."],
+["Achieve","To successfully reach a goal."],
+["Reliable","Able to be trusted."],
+["Persistent","Continuing even when something is difficult."]
+];
+let wi=0;
+function newWord(){
+wi=(wi+1)%words.length;
+document.getElementById("word").textContent=words[wi][0];
+document.getElementById("meaning").textContent=words[wi][1];
+}
+showQuestion();
+</script>
+</body>
+</html>
